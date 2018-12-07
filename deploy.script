@@ -1,0 +1,3 @@
+terraform apply --var-file ./inputs/variables.tfvars --auto-approve
+
+terraform destroy --var-file ./inputs/variables.tfvars --auto-approve
