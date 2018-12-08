@@ -8,8 +8,6 @@ Leverages the AWS credentials report to run schedule bulk checks against an acco
 
 [arch-image]: /images/credential-tracker.png
 
-## How to deploy
-
 ## Component Breakdown
 
 ### IAM
@@ -27,3 +25,10 @@ Leverages the AWS credentials report to run schedule bulk checks against an acco
 ### Lambda
 
 ### Simple Storage Service (S3)
+
+## How to deploy
+
+## How to run
+### Time based execution
+### Manual Execution
+**Note:** If running manually you will notice that a new Credential Report is not created for every request.  If a new credential report is not created the step functions state object will inform you of this and provide the time of the report that will be referenced for the manaual run.
