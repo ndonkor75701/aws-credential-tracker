@@ -8,7 +8,9 @@ Leverages the AWS credentials report to run schedule bulk checks against an acco
 
 [arch-image]: /images/credential-tracker.png
 
-## Components
+## How to deploy
+
+## Component Breakdown
 
 ### IAM
 
