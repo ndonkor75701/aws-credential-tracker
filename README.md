@@ -24,44 +24,61 @@ You can generate a credential report as often as once every four hours. When you
 ### Cloudwatch
 Cloudwatch is used to trigger the Step Functions state machine.  The tirgger is time based and when first deployed is set to run every day at 00:15.  The trigger time is configurable in the [variables.tf] file.
 
+### Simple Storage Service (S3)
+
+
+### Lambda
+
+
+### Athena
+Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. Athena is serverless, so there is no infrastructure to manage, and you pay only for the queries that you run.
+
+In order to query the credential report in S3 an Athena database is created and the following named queries are deployed to Athena.
+
+⋅⋅⋅ [create table]
+
+⋅⋅⋅ [load partitions]
+
+⋅⋅⋅ [ak-rotation-period]
+
+⋅⋅⋅ [ak-usage-period]
+
+⋅⋅⋅ [cert-rotation-period]
+
+⋅⋅⋅ [cred-usage-period]
+
 ### Step Functions
 Step Functions provides a reliable way to coordinate components and step through the functions of your application.  For the credentials tracker the state machine moves through 5 specific states.
 
 **1. Generate Report**
 
-⋅⋅⋅During this step Step Functions calls the generate-report Lambda function which requests a new report be generated ⋅⋅⋅by the IAM service.
+During this step Step Functions calls the generate-report Lambda function which requests a new report be generated ⋅⋅⋅by the IAM service.
 
 **2. Download Report**
 
-⋅⋅⋅During this step Step Functions calls the download-report Lambda function which downloads the latest generated report and places it into S3.  
+During this step Step Functions calls the download-report Lambda function which downloads the latest generated report and places it into S3.  
 
 **3. Initialise Table**
 
-⋅⋅⋅During this step Step Functions calls the initialise-report Lambda function which creates a table in Athena and loads the data partitions to make the data queryable in the Generate Findings step.
+During this step Step Functions calls the initialise-report Lambda function which creates a table in Athena and loads the data partitions to make the data queryable in the Generate Findings step.
 
 **4. Generate Findings**
 
-⋅⋅⋅During this step Step Functions calls the generate-findings Lambda function followed by the retrieve-users-to-remediate function.  The generate findings lambda function is parameterised so when it is deployed through Terraform it creates a function per finding.  A parameter is used to define which named Athena query needs to be executed to retrieve the correct users from the query result in the retrieve-users-to-remediate lambda.
+During this step Step Functions calls the generate-findings Lambda function followed by the retrieve-users-to-remediate function.  The generate findings lambda function is parameterised so when it is deployed through Terraform it creates a function per finding.  A parameter is used to define which named Athena query needs to be executed to retrieve the correct users from the query result in the retrieve-users-to-remediate lambda.
 
-⋅⋅⋅[generate-findings]
+⋅⋅⋅ [generate-findings]
 
 **5. Remediate Findings**
 
-⋅⋅⋅During this step Step Functions calls the remediate-findings Lambda function releated to the specific finding it needs to remediate.
+During this step Step Functions calls the remediate-findings Lambda function releated to the specific finding it needs to remediate.
 
-⋅⋅⋅[remediate-findings_ak-rotation]
+⋅⋅⋅ [remediate-findings_ak-rotation]
 
-⋅⋅⋅[remediate-findings_ak-usage]
+⋅⋅⋅ [remediate-findings_ak-usage]
 
-⋅⋅⋅[remediate-findings_cert-rotation]
+⋅⋅⋅ [remediate-findings_cert-rotation]
 
-⋅⋅⋅[remediate-findings_cred-usage]
-
-### Athena
-
-### Lambda
-
-### Simple Storage Service (S3)
+⋅⋅⋅ [remediate-findings_cred-usage]
 
 ## How to deploy
 
@@ -80,3 +97,9 @@ Step Functions provides a reliable way to coordinate components and step through
 [remediate-findings_ak-usage]: /lambdas/remediate-findings_ak-usage/remediate-findings_ak-usage.py
 [remediate-findings_cert-rotation]: /lambdas/remediate-findings_cert-rotation/remediate-findings_cert-rotation.py
 [remediate-findings_cred-usage]: /lambdas/remediate-findings_cred-usage/remediate-findings_cred-usage.py
+[create table]: /athena/tables/credentials-report.hql.tpl
+[load partitions]: /athena/tables/partition-update.hql.tpl
+[ak-rotation-period]: /athena/queries/ak-rotation-period.hql.tpl
+[ak-usage-period]: /athena/queries/ak-usage-period.hql.tpl
+[cert-rotation-period]: /athena/queries/cert-rotation-period.hql.tpl
+[cred-usage-period]: /athena/queries/cred-usage-period.hql.tpl
