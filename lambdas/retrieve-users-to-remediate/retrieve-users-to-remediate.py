@@ -81,5 +81,5 @@ def lambda_handler(event, context):
     except Exception as e:
         stateObject["taskStatus"] = "FAILED"
         stateObject["lastErrorMessage"] = "retrieve-users: Please review CloudWatch logs for further details"
-        print("remediate-findings: {0}".format(e))
+        print("retrieve-users: {0}".format(e))
         return stateObject
