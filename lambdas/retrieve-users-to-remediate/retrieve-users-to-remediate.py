@@ -46,7 +46,7 @@ def lambda_handler(event, context):
             #print("State: {0}".format(state))
 
         if(state != "SUCCEEDED"):
-            raise Exception("Create table execution returned a failure status of {0}".format(state))
+            raise Exception("Retrieve users returned a failure status of {0}".format(state))
 
         # Get the query results
         namedQueryResults = athena.get_query_results(QueryExecutionId = stateObject["queryExecutionId"])

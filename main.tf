@@ -56,11 +56,6 @@ resource "aws_iam_role_policy_attachment" "policy-attach" {
   policy_arn = "${aws_iam_policy.lambda-execution.arn}"
 }
 
-# Attach AWS managed policy for the Credentials Tracker execution role to use Glue
-resource "aws_iam_role_policy_attachment" "policy-attach-glue" {
-  role       = "${aws_iam_role.execution-role.name}"
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
-}
 ##--> IAM
 
 ##<-- Lambda functions
