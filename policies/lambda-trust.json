@@ -28,6 +28,20 @@
         "Service": "events.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "s3.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "athena.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
     }
   ]
 }

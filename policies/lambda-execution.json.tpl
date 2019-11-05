@@ -38,13 +38,14 @@
         {
             "Effect": "Allow",
             "Action": [
-                "athena:GetNamedQuery",
-                "athena:StartQueryExecution",
-                "athena:GetQueryExecution",
-                "athena:GetQueryExecutions",
-                "athena:GetQueryResults",
-                "athena:StartQueryExecution",
-                "athena:StopQueryExecution"
+                "athena:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "glue:*"
             ],
             "Resource": "*"
         },

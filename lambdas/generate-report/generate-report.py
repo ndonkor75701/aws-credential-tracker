@@ -21,16 +21,16 @@ def lambda_handler(event, context):
 
     try:
         response = generate_credential_report()
-        #print(response)
+        # print(response)
 
         status = response["State"]
-        #print("Credentials report is in the status of " + status)
+        print("Credentials report is in the status of {0}".format(status))
 
         stateObject["taskStatus"] = "OK"
 
         return stateObject
     except Exception as e:
         stateObject["taskStatus"] = "FAILED"
-        stateObject["lastErrorMessage"] = "enerate-report: Failed to generate credential report"
+        stateObject["lastErrorMessage"] = "Generate-report: Failed to generate credential report"
         print("generate-report: {0}".format(e))
         return stateObject

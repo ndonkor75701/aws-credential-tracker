@@ -6,7 +6,7 @@ import datetime
 import dateutil
 import botocore
 
-#print('Loading function')
+# print('Loading function')
 
 # Incoming stateObject structure
 """
@@ -36,12 +36,12 @@ def generate_credential_report():
 
 def lambda_handler(event, context):
     stateObject = event
-    #print("Received stateObject: " + json.dumps(stateObject, indent=2))
+    # print("Received stateObject: " + json.dumps(stateObject, indent=2))
 
     try:
         generateResponse = generate_credential_report()
         reportStatus = generateResponse["State"]
-        #print("Report status: {0}".format(reportStatus))
+        # print("Report status: {0}".format(reportStatus))
 
         if (reportStatus == "COMPLETE"):
 
@@ -50,10 +50,10 @@ def lambda_handler(event, context):
             if (getResponse != None or getResponse != {}):
 
                 content = getResponse["Content"]
-                #print("content: {0}".format(content))
+                # print("content: {0}".format(content))
 
                 generatedDate = getResponse["GeneratedTime"]
-                #print("generatedDate: {0}".format(generatedDate))
+                # print("generatedDate: {0}".format(generatedDate))
 
                 year = generatedDate.year
                 month = generatedDate.month
@@ -62,10 +62,10 @@ def lambda_handler(event, context):
 
                 # Check if a new report was generated
                 requested_generated = generatedDate.replace(tzinfo=None) - dateutil.parser.parse(stateObject["requestedDate"])
-                #print("generated: {0} - requested: {1} - reportDateDiff: {2}".format(generatedDate, dateutil.parser.parse(stateObject["requestedDate"]), requested_generated.seconds))
+                # print("generated: {0} - requested: {1} - reportDateDiff: {2}".format(generatedDate, dateutil.parser.parse(stateObject["requestedDate"]), requested_generated.seconds))
 
                 key = "{0}year={1}/month={2}/day={3}/time={4}/{5}".format(os.environ['prefix'], year, month, day, time, os.environ['fileName'])
-                #print("Key: {0}".format(key))
+                # print("Key: {0}".format(key))
 
                 s3 = boto3.client('s3')
                 previouslyDownloaded = None
@@ -73,22 +73,24 @@ def lambda_handler(event, context):
                 try:
                     object = s3.head_object(Bucket=os.environ['bucketName'], Key=key)
                     if(object != "" or object != {} ):
-                        #print("objectMetadata: {0}".format())
+                        # print("objectMetadata: {0}".format(json.dumps(object)))
                         previouslyDownloaded = True
                 except botocore.exceptions.ClientError as e:
                     if e.response['Error']['Code'] == "404":
                         previouslyDownloaded = False
+                    if e.response['Error']['Code'] == "403":
+                        previouslyDownloaded = False
                     else:
                         raise
 
-                #print("previouslyDownloaded: {0}".format(previouslyDownloaded))
+                # print("previouslyDownloaded: {0}".format(previouslyDownloaded))
                 if (requested_generated.seconds >= 0 and not previouslyDownloaded):
                     comment = "New report was generated on this run - The report has been downloaded and saved to S3"
-                    #print(comment)
+                    # print(comment)
 
                     # Upload report to S3
                     response = s3.put_object(Bucket=os.environ['bucketName'], Key=key, Body=content)
-                    #print("S3 Response: {0}".format(response))
+                    # print("S3 Response: {0}".format(response))
 
                     dateGenerated = {
                         "generatedDate":str(generatedDate),
@@ -99,7 +101,7 @@ def lambda_handler(event, context):
 
                 else:
                     comment = "A new report was not generate on this run. Results will be based on the report generated at {0}".format(generatedDate)
-                    #print(comment)
+                    # print(comment)
 
                     dateGenerated = {
                         "generatedDate":str(generatedDate),
